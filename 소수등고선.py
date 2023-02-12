@@ -7,7 +7,9 @@
 그리고 a,b의 범위는 2<=a<b<=2000이다.
 
 <input>
-N = 5, X = 3, Y = 4, a = 4, b = 30
+5
+3 4
+4 30
 
 <output>
 19 17 13 11 13
@@ -20,17 +22,22 @@ N = 5, X = 3, Y = 4, a = 4, b = 30
 import math
 
 #소수인지 확인하는 함수
-def check_num(num):
-    while(num != calculate_num(num)):
-        num = calculate_num(num)
+def check_num(num):   
+    status = True
+    while(status):
+        status = False
+        for i in range(2,int(math.sqrt(num))+1):
+            if num % i == 0:
+                num += 1
+                status = True
+                continue
     return num
 
-def calculate_num(num):
-    for i in range(2,int(math.sqrt(num))+1):
-        if num % i == 0:
-            num += 1
-            break 
-    return num
+#배열에 들어갈 소수찾는 함수
+def correct_num(a, gap):
+    for i in range(gap):
+        a = check_num(a+1)
+    return a
 
 
 # 입력값 받기
@@ -42,27 +49,23 @@ a, b = map(int, input().split())
 a = check_num(a)
 array = [[a for col in range(N)] for row in range(N)]
 
-#좌표값(X,Y)를 기준으로 배열 채우기
+#(X,Y)를 기준으로 배열 채우기
 for index in range(N):
     gap = abs((Y-1) - index)
-    if gap != 0: 
-        new_num = a       
-        for i in range(gap):   
-            new_num = check_num(new_num+1)
+    if gap == 0:
+        continue
+    else: 
+        new_num = correct_num(a, gap)
         array[X-1][index] = new_num
-    else:
-        array[X-1][index] = a
 
-for col in range(N):
-    for row in range(N):
-        gap = abs((X-1) - row)
-        if gap != 0: 
-            value = array[X-1][col]       
-            for i in range(gap):   
-                value = check_num(value+1)
-            array[row][col] = value
-        else:
-            pass
+for row in range(N):
+    for col in range(N):
+        gap = abs((X-1) - col)
+        if gap == 0:
+            continue
+        else: 
+            value = correct_num(array[X-1][row], gap)
+            array[col][row] = value
 
 # 배열 확인
 for i in array :
